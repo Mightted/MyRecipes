@@ -1,0 +1,69 @@
+<resources>
+    <string name="loading_text">正在加载...</string>
+
+    <string name="app_name">我的食谱</string>
+    <string name="huncai">荤菜</string>
+    <string name="sucai">素菜</string>
+    <string name="tangzhou">汤粥</string>
+    <string name="xidian">西点</string>
+    <string name="zhushi">主食</string>
+    <string name="yinpin">饮品</string>
+    <string name="biandang">便当</string>
+    <string name="xiaochi">小吃</string>
+    <string name="hongshao">红烧</string>
+
+    <string name="chao">炒</string>
+    <string name="jian">煎</string>
+    <string name="zha">炸</string>
+    <string name="men">焖</string>
+    <string name="dun">炖</string>
+    <string name="zheng">蒸</string>
+    <string name="hui">烩</string>
+    <string name="xun">熏</string>
+    <string name="yan">腌</string>
+    <string name="zhu">煮</string>
+    <string name="qiang">炝</string>
+    <string name="lu">卤</string>
+    <string name="ban">拌</string>
+    <string name="kao">烤</string>
+
+    <string name="lucai">鲁菜</string>
+    <string name="chuancai">川菜</string>
+    <string name="yuecai">粤菜</string>
+    <string name="mincai">闽菜</string>
+    <string name="zhecai">浙菜</string>
+    <string name="xiangcai">湘菜</string>
+    <string name="shanghaicai">上海菜</string>
+    <string name="huicai">徽菜</string>
+    <string name="jingcai">京菜</string>
+    <string name="dongbeicai">东北菜</string>
+    <string name="kejiacai">客家菜</string>
+    <string name="taiwanmeishi">台湾美食</string>
+    <string name="taiguocai">泰国菜</string>
+    <string name="japanliaoli">日本料理</string>
+    <string name="korealiaoli">韩国料理</string>
+    <string name="xican">西餐</string>
+
+    <string name="yunfu">孕妇食谱</string>
+    <string name="yingyou">婴幼食谱</string>
+    <string name="ertong">儿童食谱</string>
+    <string name="lanren">懒人食谱</string>
+    <string name="xiaoye">宵夜</string>
+    <string name="sushi">素食</string>
+    <string name="chanfu">产妇食谱</string>
+    <string name="erren">二人世界</string>
+    <string name="xiaowucha">下午茶</string>
+
+    <string name="jianfei">减肥</string>
+    <string name="bianmi">便秘</string>
+    <string name="yangwei">养胃</string>
+    <string name="ziyin">滋阴</string>
+    <string name="buyang">补阳</string>
+    <string name="yuejingbutiao">月经不调</string>
+    <string name="meirong">美容</string>
+    <string name="yangsheng">养生</string>
+    <string name="pinxue">贫血</string>
+    <string name="runfei">润肺</string>
+
+
+</resources>
