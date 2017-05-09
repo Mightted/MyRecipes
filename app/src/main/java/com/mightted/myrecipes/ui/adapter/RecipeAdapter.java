@@ -1,5 +1,6 @@
 package com.mightted.myrecipes.ui.adapter;
 
+import android.content.Intent;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -12,6 +13,8 @@ import com.bumptech.glide.Glide;
 import com.mightted.myrecipes.R;
 import com.mightted.myrecipes.app.MyApplication;
 import com.mightted.myrecipes.bean.RecipeItem;
+import com.mightted.myrecipes.ui.activity.MainActivity;
+import com.mightted.myrecipes.ui.activity.RecipeActivity;
 
 import java.util.List;
 
@@ -43,9 +46,25 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof ViewHolder) {
-            RecipeItem item = recipeItems.get(position);
+            final RecipeItem item = recipeItems.get(position);
             ((ViewHolder)holder).titleView.setText(item.getTitle());
-            Glide.with(MyApplication.getContext()).load(item.getImg()).into(((ViewHolder)holder).imageView);
+            if(item.getImg() == null || item.getImg().equals("")) {
+                Glide.with(MyApplication.getContext()).load(R.drawable.no_image).into(((ViewHolder)holder).imageView);
+            } else {
+                Glide.with(MyApplication.getContext()).load(item.getImg()).into(((ViewHolder)holder).imageView);
+            }
+
+            ((ViewHolder)holder).itemView.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    Intent intent = new Intent(MyApplication.getContext(), RecipeActivity.class);
+                    intent.putExtra("recipeId",item.getRecipeId());
+                    intent.putExtra("recipeTitle",item.getTitle());
+                    intent.putExtra("recipeImg",item.getRecipeImg());
+                    MyApplication.getContext().startActivity(intent);
+                }
+            });
+
         }
 
     }
@@ -79,6 +98,7 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
             super(view);
             titleView = (TextView)view.findViewById(R.id.recipe_title);
             imageView = (ImageView)view.findViewById(R.id.recipe_img);
+
         }
     }
 

@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_height="match_parent">
+
+    <include layout="@layout/tag_layout" />
+
+    <TextView
+        android:id="@+id/sumary_label"
+        android:text="相关描述"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/md_red_A100"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/recipe_sumary_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/ingredient_label"
+        android:text="原料表"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/md_red_A100"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/recipe_ingredient_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/burden_label"
+        android:text="配料表"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/md_red_A100"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/recipe_burden_text"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/step_label"
+        android:text="料理步骤"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/md_red_A100"
+        android:textSize="16sp"/>
+
+    <android.support.v4.view.ViewPager
+        android:id="@+id/view_pager"
+        android:layout_width="match_parent"
+        android:layout_height="500dp">
+    </android.support.v4.view.ViewPager>
+
+    <include layout="@layout/step_layout" />
+
+
+
+
+
+</LinearLayout>

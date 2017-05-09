@@ -5,6 +5,7 @@ package com.mightted.myrecipes.utils;
  */
 
 public class DrawerUtil {
+    public static final int RANDOM = 99;
     public static final int ALL = 100;
     public static final int CAIPIN = 101;
     public static final int GONGYI = 102;

@@ -8,6 +8,8 @@ public class RecipeItem {
 
     private String title;
     private String img;
+    private String recipeId;
+    private String recipeImg;
 
     public String getTitle() {
         return title;
@@ -23,5 +25,21 @@ public class RecipeItem {
 
     public void setImg(String img) {
         this.img = img;
+    }
+
+    public String getRecipeId() {
+        return recipeId;
+    }
+
+    public void setRecipeId(String recipeId) {
+        this.recipeId = recipeId;
+    }
+
+    public String getRecipeImg() {
+        return recipeImg;
+    }
+
+    public void setRecipeImg(String recipeImg) {
+        this.recipeImg = recipeImg;
     }
 }

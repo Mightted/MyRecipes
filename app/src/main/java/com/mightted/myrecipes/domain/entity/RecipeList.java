@@ -23,7 +23,7 @@ public class RecipeList {
         public String currentPage;
 
         @JsonField(name = "list")
-        public List<RecipeDetail> recipeList;
+        public List<RecipeDetail.Result> recipeList;
 
         @JsonField
         public int total;

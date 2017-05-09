@@ -1,4 +1,4 @@
-package com.mightted.myrecipes;
+package com.mightted.myrecipes.ui.activity;
 
 import android.content.DialogInterface;
 import android.support.v4.widget.SwipeRefreshLayout;
@@ -6,15 +6,13 @@ import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
-import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
 import android.util.Log;
 import android.view.View;
-import android.widget.ArrayAdapter;
 import android.widget.Toast;
 
-import com.mightted.myrecipes.app.MyApplication;
+import com.mightted.myrecipes.R;
 import com.mightted.myrecipes.bean.RecipeItem;
 import com.mightted.myrecipes.db.RecipeType;
 import com.mightted.myrecipes.domain.RetrofitClient;
@@ -32,7 +30,6 @@ import com.mikepenz.materialdrawer.model.ExpandableDrawerItem;
 import com.mikepenz.materialdrawer.model.PrimaryDrawerItem;
 import com.mikepenz.materialdrawer.model.SecondaryDrawerItem;
 import com.mikepenz.materialdrawer.model.interfaces.IDrawerItem;
-import com.mikepenz.materialdrawer.util.DrawerUIUtils;
 
 import org.litepal.crud.DataSupport;
 
@@ -40,13 +37,10 @@ import java.util.ArrayList;
 import java.util.List;
 
 
-import io.reactivex.Observable;
-import io.reactivex.ObservableSource;
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
 import io.reactivex.functions.Consumer;
-import io.reactivex.functions.Function;
 import io.reactivex.schedulers.Schedulers;
 
 public class MainActivity extends AppCompatActivity {
@@ -67,11 +61,19 @@ public class MainActivity extends AppCompatActivity {
 
     private static int currentPage = 1;
 
-    private boolean isLoading;
+    private static String currentType = "";
+
+    private static String currentRecipe = "";
+
+    private static boolean isRefreshing;
+
+    private static boolean isLoadingMore;
 
 
 
     private List<RecipeItem> recipeItems;
+
+    private List<RecipeType> recipeType;
 
 
     @Override
@@ -88,21 +90,36 @@ public class MainActivity extends AppCompatActivity {
 
         result = new DrawerBuilder(this)
                 .withToolbar(toolbar)
-                .addDrawerItems(
-                        new ExpandableDrawerItem().withName("全部菜谱").withSelectable(false).withSubItems(
-                                new SecondaryDrawerItem().withName("按菜品选择菜谱").withIdentifier(DrawerUtil.CAIPIN).withSelectable(false),
-                                new SecondaryDrawerItem().withName("按工艺选择菜谱").withIdentifier(DrawerUtil.GONGYI).withSelectable(false),
-                                new SecondaryDrawerItem().withName("按菜系选择菜谱").withIdentifier(DrawerUtil.CAIXI).withSelectable(false),
-                                new SecondaryDrawerItem().withName("按人群选择菜谱").withIdentifier(DrawerUtil.RENQUN).withSelectable(false),
-                                new SecondaryDrawerItem().withName("按功能选择菜谱").withIdentifier(DrawerUtil.GONGNENG).withSelectable(false)
-                        )
-//                        new PrimaryDrawerItem().withName("全部菜谱").withIdentifier(DrawerUtil.ALL).withSelectable(false)
-                ).withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
+//                .addDrawerItems(
+//                        new ExpandableDrawerItem().withName("全部菜谱").withSelectable(false).withSubItems(
+//                                new SecondaryDrawerItem().withName("按菜品选择菜谱").withIdentifier(DrawerUtil.CAIPIN).withSelectable(false),
+//                                new SecondaryDrawerItem().withName("按工艺选择菜谱").withIdentifier(DrawerUtil.GONGYI).withSelectable(false),
+//                                new SecondaryDrawerItem().withName("按菜系选择菜谱").withIdentifier(DrawerUtil.CAIXI).withSelectable(false),
+//                                new SecondaryDrawerItem().withName("按人群选择菜谱").withIdentifier(DrawerUtil.RENQUN).withSelectable(false),
+//                                new SecondaryDrawerItem().withName("按功能选择菜谱").withIdentifier(DrawerUtil.GONGNENG).withSelectable(false)
+//                        )
+//                )
+//                .addDrawerItems(onLoadType())
+                .withOnDrawerItemClickListener(new Drawer.OnDrawerItemClickListener() {
                     @Override
                     public boolean onItemClick(View view, int position, IDrawerItem drawerItem) {
+                        boolean returnType = true;
                         if((int)drawerItem.getIdentifier() > DrawerUtil.ALL && (int)drawerItem.getIdentifier() <= DrawerUtil.GONGNENG) {
                             chooseTypes((int)drawerItem.getIdentifier());
+                        }else if((int)drawerItem.getIdentifier() == DrawerUtil.RANDOM) {
+                            //// TODO: 2017/5/9 当点击的是试试手气时，将随机选中任意一个菜谱类型进行显示
+                            returnType = false;
+                        } else if((int)drawerItem.getIdentifier() == DrawerUtil.ALL){
+
+                        } else {
+                            RecipeType type = recipeType.get((int)drawerItem.getIdentifier());
+                            currentType = type.getCtgId();
+                            currentPage = 1;
+                            onRefreshList();
+//                            initList(currentType,currentRecipe,currentPage);
+                            returnType = false;
                         }
+
 
 //                        switch ((int)drawerItem.getIdentifier()) {
 //                            case DrawerUtil.CAIPIN:
@@ -116,10 +133,12 @@ public class MainActivity extends AppCompatActivity {
 //                            case DrawerUtil.GONGNENG:
 //                                break;
 //                        }
-                        return true;
+                        return returnType;
                     }
                 })
                 .build();
+
+        initDrawerItems();
 
 
         if(recipeItems == null) {
@@ -136,7 +155,7 @@ public class MainActivity extends AppCompatActivity {
         adapter = new RecipeAdapter(recipeItems);
         recyclerView.setAdapter(adapter);
 
-        initList(currentPage);
+        initList(currentType,currentRecipe,currentPage);
         initListener();
 
 
@@ -144,10 +163,10 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    private void initList(int page) {
+    private void initList(final String ctgId,final String recipe, final int page) {
 
         ListService service = RetrofitClient.getInstance().create(ListService.class);
-        service.getList(RetrofitUtil.KEY,"0010001007","红烧肉",page,30)
+        service.getList(RetrofitUtil.KEY,ctgId,recipe,page,30)
                 .subscribeOn(Schedulers.io())
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<RecipeList>() {
@@ -161,31 +180,34 @@ public class MainActivity extends AppCompatActivity {
                 .subscribe(new Observer<RecipeList>() {
                     @Override
                     public void onSubscribe(Disposable d) {
-                        Log.i("MainActivity","onSubscribe is called");
+                        Log.i("onSubscribe","当前类型为:"+ctgId + " 当前页数为:"+page);
+                        Log.i("onSubscribe","onSubscribe is called");
                         if(recipeItems == null) {
                             recipeItems = new ArrayList<>();
                             currentPage = 1;
                         }
 
-                        if(isLoading) {
+                        if(isLoadingMore && recipeItems.size() > 0) {
                             recipeItems.remove(recipeItems.size()-1);
                             adapter.notifyDataSetChanged();
-                            isLoading = false;
                         }
                     }
 
                     @Override
                     public void onNext(RecipeList value) {
                         Log.i("MainActivity","onNext is called");
-                        List<RecipeDetail> list = value.result.recipeList;
+                        List<RecipeDetail.Result> list = value.result.recipeList;
 
                         if(list.size() > 0) {
-                            for(RecipeDetail recipe:list) {
+                            for(RecipeDetail.Result recipe:list) {
                                 RecipeItem item = new RecipeItem();
                                 item.setTitle(recipe.name);
                                 item.setImg(recipe.thumbnail);
+                                item.setRecipeId(recipe.menuId);
+                                item.setRecipeImg(recipe.recipe.img);
                                 recipeItems.add(item);
-                                adapter.notifyDataSetChanged();
+                                adapter.notifyItemChanged(recipeItems.size()-1);
+//                                adapter.notifyDataSetChanged();
                                 if(refreshLayout.isRefreshing()) {
                                     refreshLayout.setRefreshing(false);
                                 }
@@ -194,6 +216,15 @@ public class MainActivity extends AppCompatActivity {
                         } else {
                             Toast.makeText(MainActivity.this,"已经到头了",Toast.LENGTH_SHORT).show();
                             currentPage --;
+                        }
+
+//                        Log.i("onNext","isLoading变为false: " + isLoading);
+//                        isLoading = false;
+                        if(isLoadingMore) {
+                            isLoadingMore = false;
+                        }
+                        if(isRefreshing) {
+                            isRefreshing = false;
                         }
 
                     }
@@ -218,16 +249,8 @@ public class MainActivity extends AppCompatActivity {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                if(recipeItems == null) {
-                    recipeItems = new ArrayList<>();
-                } else {
-                    int size = recipeItems.size();
-                    recipeItems.clear();
-                    adapter.notifyItemRangeRemoved(0,size);
-                }
-                currentPage = 1;
-                initList(currentPage);
-                isLoading = false;
+                isRefreshing = true;
+                onRefreshList();
 
 
             }
@@ -239,10 +262,10 @@ public class MainActivity extends AppCompatActivity {
                 super.onScrolled(recyclerView, dx, dy);
 
                 lastPosition = manager.findLastCompletelyVisibleItemPosition();
-//                Log.i("MainActivity","the current position is " + lastPosition);
-                if(!isLoading && lastPosition == recipeItems.size()-1) {
+//                Log.i("MainActivity","the current position is " + lastPosition + "and isLoading is " + isLoadingMore);
+                if(!isLoadingMore && lastPosition == recipeItems.size()-1 && lastPosition > 0) {
                     recipeItems.add(new RecipeItem());
-                    isLoading = true;
+                    isLoadingMore = true;
                     adapter.notifyDataSetChanged();
                     onLoadMore();
                 }
@@ -250,8 +273,21 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
+    private void onRefreshList() {
+        if(recipeItems == null) {
+            recipeItems = new ArrayList<>();
+        } else {
+            int size = recipeItems.size();
+            recipeItems.clear();
+            adapter.notifyItemRangeRemoved(0,size);
+        }
+        currentPage = 1;
+        initList(currentType,currentRecipe,currentPage);
+    }
+
     private void onLoadMore() {
-        initList(currentPage);
+        Log.i("onLoadMore","正在加载更多...");
+        initList(currentType,currentRecipe,currentPage);
     }
 
     private void chooseTypes(final int type) {
@@ -337,9 +373,11 @@ public class MainActivity extends AppCompatActivity {
                                         runOnUiThread(new Runnable() {
                                             @Override
                                             public void run() {
-                                                if(result.isDrawerOpen()) {
-                                                    result.closeDrawer();
-                                                }
+                                                //// TODO: 2017/5/9 如果点击确定键前后，没有改变任何内容的话，不应该重新加载布局
+                                                initDrawerItems();
+//                                                if(result.isDrawerOpen()) {
+//                                                    result.closeDrawer();
+//                                                }
                                             }
                                         });
 
@@ -436,6 +474,58 @@ public class MainActivity extends AppCompatActivity {
                         onShowDialog(recipeTypes);
                     }
                 });
+    }
+
+    private PrimaryDrawerItem[] onLoadType() {
+        Thread temp = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                if(recipeType != null) {
+                    recipeType.clear();
+                }
+                recipeType = DataSupport.select("name","ctgId").where("isChoosed = ?","1").find(RecipeType.class);
+            }
+        });
+        temp.start();
+        try {
+            temp.join();
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+
+        PrimaryDrawerItem[] typeItems = new PrimaryDrawerItem[recipeType.size()+1];
+//        Random random = new Random();
+        typeItems[0] = new PrimaryDrawerItem()
+                .withName("试试手气")
+//                .withIdentifier(random.nextInt(58)+10001007)
+                .withIdentifier(DrawerUtil.RANDOM)
+                .withSelectable(false);
+        if(recipeType.size() > 0) {
+            Log.i("onLoadType","预选项为空");
+            for(int i = 0; i < recipeType.size(); i++) {
+                typeItems[i+1] = new PrimaryDrawerItem()
+                        .withName(recipeType.get(i).getName())
+                        .withIdentifier(i)
+                        .withSelectable(false);
+            }
+        }
+        return typeItems;
+    }
+
+    private void initDrawerItems() {
+        if(result != null) {
+            result.removeAllItems();
+            result.addItems(
+                    new ExpandableDrawerItem().withName("全部菜谱").withSelectable(false).withIdentifier(DrawerUtil.ALL).withSubItems(
+                            new SecondaryDrawerItem().withName("按菜品选择菜谱").withIdentifier(DrawerUtil.CAIPIN).withSelectable(false),
+                            new SecondaryDrawerItem().withName("按工艺选择菜谱").withIdentifier(DrawerUtil.GONGYI).withSelectable(false),
+                            new SecondaryDrawerItem().withName("按菜系选择菜谱").withIdentifier(DrawerUtil.CAIXI).withSelectable(false),
+                            new SecondaryDrawerItem().withName("按人群选择菜谱").withIdentifier(DrawerUtil.RENQUN).withSelectable(false),
+                            new SecondaryDrawerItem().withName("按功能选择菜谱").withIdentifier(DrawerUtil.GONGNENG).withSelectable(false)
+                    )
+            );
+            result.addItems(onLoadType());
+        }
     }
 
 }
