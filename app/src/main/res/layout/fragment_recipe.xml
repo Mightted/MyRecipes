@@ -1,13 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical" android:layout_width="match_parent"
+    android:layout_margin="5dp"
     android:layout_height="match_parent">
 
     <include layout="@layout/tag_layout" />
 
     <TextView
         android:id="@+id/sumary_label"
-        android:text="相关描述"
+        android:text="@string/sumary"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -22,8 +23,24 @@
         android:textSize="16sp"/>
 
     <TextView
+        android:id="@+id/recipe_label"
+        android:text="@string/recipe_theme"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="30dp"
+        android:textColor="@color/md_red_A100"
+        android:textSize="16sp"/>
+
+    <TextView
+        android:id="@+id/recipe_name"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="10dp"
+        android:textSize="20sp"/>
+
+    <TextView
         android:id="@+id/ingredient_label"
-        android:text="原料表"
+        android:text="@string/ingredient"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -39,7 +56,7 @@
 
     <TextView
         android:id="@+id/burden_label"
-        android:text="配料表"
+        android:text="@string/burden"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
@@ -55,20 +72,38 @@
 
     <TextView
         android:id="@+id/step_label"
-        android:text="料理步骤"
+        android:text="@string/step"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_marginTop="30dp"
         android:textColor="@color/md_red_A100"
         android:textSize="16sp"/>
 
-    <android.support.v4.view.ViewPager
-        android:id="@+id/view_pager"
+    <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="500dp">
-    </android.support.v4.view.ViewPager>
 
-    <include layout="@layout/step_layout" />
+        <android.support.v4.view.ViewPager
+            android:id="@+id/view_pager"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent">
+
+        </android.support.v4.view.ViewPager>
+
+        <me.relex.circleindicator.CircleIndicator
+            android:id="@+id/indicator"
+            android:layout_width="match_parent"
+            android:layout_height="20dp"
+            android:layout_alignParentBottom="true"
+            android:layout_marginBottom="150dp"/>
+
+
+    </RelativeLayout>
+
+
+
+
+    <!--<include layout="@layout/step_layout" />-->
 
 
 

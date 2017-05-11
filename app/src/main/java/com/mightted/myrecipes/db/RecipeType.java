@@ -3,6 +3,7 @@ package com.mightted.myrecipes.db;
 import org.litepal.crud.DataSupport;
 
 /**
+ * 菜谱标签数据库表
  * Created by 晓深 on 2017/5/8.
  */
 

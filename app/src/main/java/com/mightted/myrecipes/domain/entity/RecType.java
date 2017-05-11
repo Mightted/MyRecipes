@@ -6,6 +6,7 @@ import com.bluelinelabs.logansquare.annotation.JsonObject;
 import java.util.List;
 
 /**
+ * 加载菜谱标签的pojo
  * Created by 晓深 on 2017/5/8.
  */
 
@@ -15,8 +16,8 @@ public class RecType {
     @JsonField
     public String msg;
 
-//    @JsonField(name = "retCode")
-//    public String resultCode;
+    @JsonField(name = "retCode")
+    String resultCode;
 
     @JsonField
     public Result result;
@@ -25,17 +26,17 @@ public class RecType {
     public static class Result {
 
         @JsonField(name = "categoryInfo")
-        public AllRecipe all;
+        AllRecipe all;
 
         @JsonField(name = "childs")
         public List<SearchType> types;
 
 
         @JsonObject
-        public static class AllRecipe {
+        static class AllRecipe {
 
             @JsonField
-            public String ctgId;
+            String ctgId;
 
             @JsonField
             public String name;
@@ -52,16 +53,16 @@ public class RecType {
             public List<Type> types;
 
             @JsonObject
-            public static class SearchInfo {
+            static class SearchInfo {
 
                 @JsonField
-                public String ctgId;
+                String ctgId;
 
                 @JsonField
                 public String name;
 
                 @JsonField
-                public String parentId;
+                String parentId;
             }
 
             @JsonObject

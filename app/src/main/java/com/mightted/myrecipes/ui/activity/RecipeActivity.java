@@ -22,6 +22,8 @@ public class RecipeActivity extends AppCompatActivity {
 
     private CollapsingToolbarLayout collapsingToolbarLayout;
 
+    private String recipeId;
+
 
 
     @Override
@@ -31,14 +33,23 @@ public class RecipeActivity extends AppCompatActivity {
 
         toolbar = (Toolbar)findViewById(R.id.toolbar);
         toolbarImg = (ImageView)findViewById(R.id.toolbar_img);
-        collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
+        Log.d("RecipeActivity","onCreate is called");
+//        collapsingToolbarLayout = (CollapsingToolbarLayout)findViewById(R.id.collapsing_toolbar);
         setSupportActionBar(toolbar);
 
-        getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        getSupportActionBar().setHomeButtonEnabled(true);
+        if(getSupportActionBar() != null) {
+            getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+            getSupportActionBar().setHomeButtonEnabled(true);
+        }
 
         Intent intent = getIntent();
-        String recipeId = intent.getStringExtra("recipeId");
+        String rId = intent.getStringExtra("recipeId");
+
+        if(rId != null) {
+            recipeId = rId;
+        } else {
+            recipeId = savedInstanceState.getString("recipeId");
+        }
 
         if(getSupportActionBar() != null) {
             getSupportActionBar().setTitle(intent.getStringExtra("recipeTitle"));
@@ -49,15 +60,16 @@ public class RecipeActivity extends AppCompatActivity {
         getSupportFragmentManager().beginTransaction().replace(R.id.recipe_content,new RecipeFragment(recipeId)).commit();
     }
 
-    //要动态改变title的话，需要使用CollapsingToolbarLayout!
+    //要动态改变title的话，需要使用CollapsingToolbarLayout的setTitle!
 
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
         if(item.getItemId() == android.R.id.home) {
             finish();
-//            collapsingToolbarLayout.setTitle("aaaa");
+//            collapsingToolbarLayout.setTitle("title");
         }
         return true;
     }
+
 }

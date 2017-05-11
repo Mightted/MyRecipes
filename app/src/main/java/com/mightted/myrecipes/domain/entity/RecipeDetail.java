@@ -6,6 +6,7 @@ import com.bluelinelabs.logansquare.annotation.JsonObject;
 import java.util.List;
 
 /**
+ * 记录菜谱详细数据的pojo
  * Created by 晓深 on 2017/5/7.
  */
 
@@ -45,21 +46,11 @@ public class RecipeDetail {
             @JsonField
             public String method;  //做菜步骤，API没做处理
 
-//            @JsonObject
-//            public static class Ingredient {
-//
-//                @JsonField
-//                public String ingredient;  //原料
-//
-//                @JsonField
-//                public String burden;  //配料
-//            }
-
             @JsonObject
             public static class Method {
 
                 @JsonField
-                public String img;
+                public String img ="";
 
                 @JsonField
                 public String step;

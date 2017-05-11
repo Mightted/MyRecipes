@@ -1,5 +1,13 @@
 <resources>
-    <string name="loading_text">正在加载...</string>
+    <string name="loading_text">正在加载…</string>
+    <string name="search">查找</string>
+    <string name="sumary">相关描述</string>
+    <string name="recipe_theme">主题</string>
+    <string name="ingredient">原料表</string>
+    <string name="burden">配料表</string>
+    <string name="step">料理步骤</string>
+    <string name="recipe_img">菜谱大图</string>
+
 
     <string name="app_name">我的食谱</string>
     <string name="huncai">荤菜</string>
@@ -64,6 +72,8 @@
     <string name="yangsheng">养生</string>
     <string name="pinxue">贫血</string>
     <string name="runfei">润肺</string>
+
+    <string name="about">本应用是本人@Mightted于闲暇之余编写的一个练手的项目,同时提供给家人朋友使用的一个菜谱。本应用不用于商业途径,如要获取本项目源码,请到我的github，<a href='https://github.com/Mightted/MyRecipes'>https://github.com/Mightted/MyRecipes</a> 进行下载,或联系我QQ:1185318543</string>
 
 
 </resources>

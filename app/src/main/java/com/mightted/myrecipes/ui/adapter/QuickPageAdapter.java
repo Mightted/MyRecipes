@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import java.util.List;
 
 /**
+ * 做菜步骤轮播图用到的ViewPager的adapter
  * Created by 晓深 on 2017/5/9.
  */
 

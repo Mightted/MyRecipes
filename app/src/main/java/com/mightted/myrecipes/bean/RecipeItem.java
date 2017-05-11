@@ -1,6 +1,7 @@
 package com.mightted.myrecipes.bean;
 
 /**
+ * 菜谱列表项bean
  * Created by 晓深 on 2017/5/8.
  */
 

@@ -20,7 +20,20 @@
             android:elevation="6dp"
             app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
             app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:layout_scrollFlags="enterAlways|scroll|snap"/>
+            app:layout_scrollFlags="enterAlways|scroll|snap">
+
+            <EditText
+                android:id="@+id/search_text"
+                android:layout_width="match_parent"
+                android:layout_height="30dp"
+                android:imeOptions="actionDone"
+                android:visibility="gone"
+                android:maxLines="1"
+                android:inputType="text"
+                android:background="@null"/>
+
+
+        </android.support.v7.widget.Toolbar>
 
 
     </android.support.design.widget.AppBarLayout>

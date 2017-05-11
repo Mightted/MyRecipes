@@ -3,14 +3,12 @@ package com.mightted.myrecipes.app;
 import android.app.Application;
 import android.content.Context;
 
-import com.mightted.myrecipes.db.RecipeType;
 
 import org.litepal.LitePal;
-import org.litepal.crud.DataSupport;
 
-import java.util.List;
 
 /**
+ * 自定义Application
  * Created by 晓深 on 2017/5/8.
  */
 
@@ -31,11 +29,4 @@ public class MyApplication extends Application {
         return mContext;
     }
 
-    private void initDB() {
-
-        List<RecipeType> recipeTypes = DataSupport.findAll(RecipeType.class);
-        if(recipeTypes.size() == 0) {
-
-        }
-    }
 }
