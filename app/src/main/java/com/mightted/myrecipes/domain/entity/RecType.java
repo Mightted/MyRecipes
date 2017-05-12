@@ -36,7 +36,7 @@ public class RecType {
         static class AllRecipe {
 
             @JsonField
-            String ctgId;
+            public String ctgId;
 
             @JsonField
             public String name;

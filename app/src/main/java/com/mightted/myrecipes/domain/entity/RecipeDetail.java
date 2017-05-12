@@ -67,6 +67,9 @@ public class RecipeDetail {
 
         @JsonField
         public String thumbnail;
+
+        @JsonField(name = "retCode")
+        public String resultCode;
     }
 
 

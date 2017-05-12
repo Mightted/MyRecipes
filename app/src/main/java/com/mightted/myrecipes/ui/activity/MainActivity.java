@@ -4,7 +4,7 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Rect;
-import android.os.Build;
+
 import android.support.v4.widget.SwipeRefreshLayout;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
@@ -12,12 +12,12 @@ import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.text.Html;
+
 import android.text.TextUtils;
-import android.text.method.LinkMovementMethod;
+
 import android.util.Log;
 import android.view.KeyEvent;
-import android.view.LayoutInflater;
+
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.MotionEvent;
@@ -85,6 +85,8 @@ public class MainActivity extends AppCompatActivity {
 
     private String currentRecipe = "";
 
+    private int currentTotal = 0;
+
     private boolean isRefreshing;
 
     private boolean isLoadingMore;
@@ -92,6 +94,8 @@ public class MainActivity extends AppCompatActivity {
     private Disposable disposable;
 
     private boolean isStartByIntent = false;
+
+    private boolean successRequest;
 
 
 
@@ -130,7 +134,7 @@ public class MainActivity extends AppCompatActivity {
                             initTitle();
                             returnType = false;
                         } else if((int)drawerItem.getIdentifier() == DrawerUtil.ALL){
-
+                            returnType = true;
                         } else if((int)drawerItem.getIdentifier() == DrawerUtil.ABOUT) {
 
                             new AlertDialog.Builder(MainActivity.this)
@@ -217,29 +221,41 @@ public class MainActivity extends AppCompatActivity {
      * @param page 列表页数，默认值为20，可修改
      */
     private void initList(final String ctgId,final String recipe, final int page) {
-
+        successRequest = false;
         ListService service = RetrofitClient.getInstance().create(ListService.class);
         service.getList(RetrofitUtil.KEY,ctgId,recipe,page,30)
                 .subscribeOn(Schedulers.io())
                 .doOnNext(new Consumer<RecipeList>() {
                     @Override
                     public void accept(RecipeList recipeList) throws Exception {
-//                        Thread.sleep(2*1000);
+//                        Thread.sleep(1*1000);
                     }
                 })
                 .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<RecipeList>() {
                     @Override
                     public void accept(RecipeList recipeList) throws Exception {
-                        if(recipeList.msg.equals("success")) {
+                        if(recipeList.resultCode.equals("200")) {
                             Log.i("MainActivity","请求成功返回");
+
+                            currentRecipe = recipe;
+                            currentType = ctgId;
+
+                            successRequest = true;
                             if(recipeItems == null) {
                                 recipeItems = new ArrayList<>();
                             } else {
-                                int size = recipeItems.size();
-                                recipeItems.clear();
-                                adapter.notifyItemRangeRemoved(0,size);
+                                if(isRefreshing) {
+                                    int size = recipeItems.size();
+                                    recipeItems.clear();
+                                    adapter.notifyItemRangeRemoved(0,size);
+                                }
+
                             }
+                        } else {
+                            Log.i("MainActivity","请求错误");
+                            Toast.makeText(MainActivity.this,"无相关结果",Toast.LENGTH_SHORT).show();
+                            successRequest = false;
                         }
                     }
                 })
@@ -247,19 +263,41 @@ public class MainActivity extends AppCompatActivity {
                     @Override
                     public void onSubscribe(Disposable d) {
                         disposable = d;
-//                        Log.i("onSubscribe","当前类型为:"+ctgId + " 当前页数为:"+page);
-//                        Log.i("onSubscribe","onSubscribe is called");
-                        if(recipeItems == null) {
+                        Log.i("onSubscribe","当前类型为:"+ctgId + " 当前页数为:"+page);
+                        Log.i("onSubscribe","onSubscribe is called");
+                        if (recipeItems == null) {
                             recipeItems = new ArrayList<>();
                             currentPage = 1;
                         }
+
 
                     }
 
                     @Override
                     public void onNext(RecipeList value) {
+
+                        if(!successRequest) {
+                            refreshLayout.setRefreshing(false);
+                            return;
+                        }
                         Log.i("MainActivity","onNext is called");
                         List<RecipeDetail.Result> list = value.result.recipeList;
+
+                        if(isLoadingMore && recipeItems.size() > 0) {
+                            isLoadingMore = false;
+                            currentTotal = value.result.total;
+                            //必须要在线程外进行，否则会延误删除加载状态item的时间
+                            recipeItems.remove(recipeItems.size()-1);
+                            recyclerView.post(new Runnable() {
+                                @Override
+                                public void run() {
+
+//                                            adapter.notifyItemRemoved();
+                                    adapter.notifyDataSetChanged();
+                                }
+                            });
+
+                        }
 
                         if(list.size() > 0) {
                             for(RecipeDetail.Result recipe:list) {
@@ -283,28 +321,31 @@ public class MainActivity extends AppCompatActivity {
 //                                    Log.i("onNext","捕获一个空值异常");
                                 }
 
-                                if(isLoadingMore && recipeItems.size() > 0) {
-                                    isLoadingMore = false;
-                                    //必须要在线程外进行，否则会延误删除加载状态item的时间
-                                    recipeItems.remove(recipeItems.size()-1);
-                                    recyclerView.post(new Runnable() {
-                                        @Override
-                                        public void run() {
-
-//                                            adapter.notifyItemRemoved();
-                                            adapter.notifyDataSetChanged();
-                                        }
-                                    });
-
-                                }
+//                                if(isLoadingMore && recipeItems.size() > 0) {
+//                                    isLoadingMore = false;
+//                                    //必须要在线程外进行，否则会延误删除加载状态item的时间
+//                                    recipeItems.remove(recipeItems.size()-1);
+//                                    recyclerView.post(new Runnable() {
+//                                        @Override
+//                                        public void run() {
+//
+////                                            adapter.notifyItemRemoved();
+//                                            adapter.notifyDataSetChanged();
+//                                        }
+//                                    });
+//
+//                                }
 
                                 recipeItems.add(item);
                                 adapter.notifyItemChanged(recipeItems.size()-1); //选择局部刷新而不是全体瞎鸡儿刷新
+                                if(currentTotal == recipeItems.size()) {
+                                    Toast.makeText(MainActivity.this,"已经到头了",Toast.LENGTH_SHORT).show();
+                                }
 //                                adapter.notifyDataSetChanged();
                                 if(refreshLayout.isRefreshing()) {
                                     refreshLayout.setRefreshing(false);
                                 }
-                                Log.i("onNext","name为" + recipe.name);
+                                Log.i("onNext","name为 " + item.getTitle());
                             }
                         } else {
                             Toast.makeText(MainActivity.this,"已经到头了",Toast.LENGTH_SHORT).show();
@@ -328,13 +369,13 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onComplete() {
-                        if(disposable != null) {
-                            disposable = null;
+                        if(successRequest) {
+                            if(disposable != null) {
+                                disposable = null;
+                            }
+                            Log.i("MainActivity","onComplete is called");
+                            currentPage ++;
                         }
-                        Log.i("MainActivity","onComplete is called");
-                        currentPage ++;
-
-
                     }
                 });
 
@@ -347,7 +388,7 @@ public class MainActivity extends AppCompatActivity {
         refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
             @Override
             public void onRefresh() {
-                isRefreshing = true;
+
                 onRefreshList();
 
             }
@@ -366,7 +407,9 @@ public class MainActivity extends AppCompatActivity {
                 if(!isLoadingMore && lastPosition == recipeItems.size()-1 && lastPosition > 0) {
                     Log.i("MainActivity","开始加载更多");
 //                    adapter.notifyDataSetChanged();
-                    onLoadMore();
+                    if(currentTotal != recipeItems.size()) {
+                        onLoadMore();
+                    }
                 }
             }
         });
@@ -386,12 +429,14 @@ public class MainActivity extends AppCompatActivity {
         editText.setOnEditorActionListener(new TextView.OnEditorActionListener() {
             @Override
             public boolean onEditorAction(TextView v, int actionId, KeyEvent event) {
-                Toast.makeText(MainActivity.this,"触发事件",Toast.LENGTH_SHORT).show();
                 if(actionId == EditorInfo.IME_ACTION_DONE && !TextUtils.isEmpty(editText.getText())) {
-                    currentRecipe = editText.getText().toString();
-                    currentType="";
+//                    currentRecipe = editText.getText().toString();
+//                    currentType="";
                     refreshLayout.setRefreshing(true);
-                    onRefreshList();
+                    currentPage = 1;
+                    isRefreshing = true;
+                    initList("",editText.getText().toString(),currentPage);
+//                    onRefreshList();
                 }
                 return false;
             }
@@ -410,6 +455,8 @@ public class MainActivity extends AppCompatActivity {
 //            recipeItems.clear();
 //            adapter.notifyItemRangeRemoved(0,size);
 //        }
+        isRefreshing = true;
+        refreshLayout.setRefreshing(true);
         currentPage = 1;
         initList(currentType,currentRecipe,currentPage);
     }
@@ -544,18 +591,20 @@ public class MainActivity extends AppCompatActivity {
         TypeService service = RetrofitClient.getInstance().create(TypeService.class);
         service.initRecipeType(RetrofitUtil.KEY)
                 .subscribeOn(Schedulers.io())
-                .observeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
                 .doOnNext(new Consumer<RecType>() {
                     @Override
                     public void accept(RecType recType) throws Exception {
                         if(recType.msg.equals("success")) {
                             Log.i("initRecipeType","分类标签查询请求成功");
+                            Toast.makeText(MainActivity.this,"正在初始化菜谱信息,请稍等...",Toast.LENGTH_SHORT).show();
                         } else {
                             Log.i("initRecipeType","分类标签查询请求失败");
                             Log.i("initRecipeType",recType.msg);
                         }
                     }
                 })
+                .observeOn(Schedulers.io())
 //                .flatMap(new Function<RecType, ObservableSource<RecType.Result.SearchType>>() {
 //                    @Override
 //                    public ObservableSource<RecType.Result.SearchType> apply(RecType recType) throws Exception {
@@ -614,12 +663,19 @@ public class MainActivity extends AppCompatActivity {
 
                     @Override
                     public void onError(Throwable e) {
-                        Toast.makeText(MainActivity.this,"服务器或网络错误",Toast.LENGTH_SHORT).show();
+//                        Toast.makeText(MainActivity.this,"服务器或网络错误",Toast.LENGTH_SHORT).show();
                         Log.i("initRecipeType","onError is called");
                     }
 
                     @Override
                     public void onComplete() {
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                Toast.makeText(MainActivity.this,"初始化完成",Toast.LENGTH_SHORT).show();
+                            }
+                        });
+
                         Log.i("initRecipeType","onComplete is called");
                         List<RecipeType> recipeTypes = DataSupport.where("parentId = ?",searchType).find(RecipeType.class);
                         onShowDialog(recipeTypes);
@@ -696,12 +752,15 @@ public class MainActivity extends AppCompatActivity {
             editText.clearFocus();
         } else {
             super.onBackPressed();
-            if(isStartByIntent) {
-                Log.i("onBackPressed","半路进来的被杀死了");
-                finish();
+            if(result.isDrawerOpen()) {
+                result.closeDrawer();
+            } else {
+                if(isStartByIntent) {
+                    Log.i("onBackPressed","半路进来的被杀死了");
+                    finish();
+                }
             }
         }
-
     }
 
 

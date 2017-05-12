@@ -21,15 +21,15 @@ public class RecipeList {
     public static class Result {
 
         @JsonField(name = "curPage")
-        String currentPage;
+        public String currentPage;
 
         @JsonField(name = "list")
         public List<RecipeDetail.Result> recipeList;
 
         @JsonField
-        int total;
+        public int total;
     }
 
     @JsonField(name = "retCode")
-    String resultCode;
+    public String resultCode;
 }

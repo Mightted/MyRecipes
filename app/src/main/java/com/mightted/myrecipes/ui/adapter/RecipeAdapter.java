@@ -15,7 +15,6 @@ import com.bumptech.glide.Glide;
 import com.mightted.myrecipes.R;
 import com.mightted.myrecipes.app.MyApplication;
 import com.mightted.myrecipes.bean.RecipeItem;
-import com.mightted.myrecipes.ui.activity.MainActivity;
 import com.mightted.myrecipes.ui.activity.RecipeActivity;
 
 import java.util.List;

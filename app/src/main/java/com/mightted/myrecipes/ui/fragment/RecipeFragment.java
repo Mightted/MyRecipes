@@ -1,5 +1,6 @@
 package com.mightted.myrecipes.ui.fragment;
 
+import android.annotation.SuppressLint;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.Nullable;
@@ -10,7 +11,6 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -42,6 +42,7 @@ import me.relex.circleindicator.CircleIndicator;
  * Created by 晓深 on 2017/5/9.
  */
 
+@SuppressLint("ValidFragment")
 public class RecipeFragment extends Fragment {
 
     private TextView sumaryText;
@@ -190,7 +191,12 @@ public class RecipeFragment extends Fragment {
             tagList.add(tag);
         }
 
-        sumaryText.setText(recipe.result.recipe.sumary);
+        try {
+            sumaryText.setText(recipe.result.recipe.sumary);
+        } catch (NullPointerException e) {
+            sumaryText.setText("无");
+        }
+
 
         nameText.setText(recipe.result.name);
 
@@ -214,12 +220,15 @@ public class RecipeFragment extends Fragment {
 
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            ingredientText.setText("无");
+            burdenText.setText("无");
         }
 
 
-        String method = recipe.result.recipe.method;
         List<RecipeDetail.Result.Recipe.Method> methods;
         try {
+            String method = recipe.result.recipe.method;
             if(method != null) {
                 viewList = new ArrayList<>();
                 methods = LoganSquare.parseList(method,RecipeDetail.Result.Recipe.Method.class);
@@ -251,6 +260,8 @@ public class RecipeFragment extends Fragment {
 
         } catch (IOException e) {
             e.printStackTrace();
+        } catch (NullPointerException e) {
+            // TODO: 2017/5/12 空值异常进行处理，但是步骤为空我有什么办法~
         }
 
     }
