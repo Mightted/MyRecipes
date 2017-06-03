@@ -1,56 +1,93 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.design.widget.CoordinatorLayout
+<layout
     xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    tools:context="com.mightted.myrecipes.ui.activity.MainActivity">
+    xmlns:app="http://schemas.android.com/apk/res-auto">
 
-    <android.support.design.widget.AppBarLayout
-        android:id="@+id/appBar"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+    <data>
+        <import type="java.util.List"/>
+        <import type="com.mightted.myrecipes.databindings.models.RecipeItem"/>
+        <variable
+            name="searchHandler"
+            type="com.mightted.myrecipes.databindings.handlers.SearchHandler"/>
+        
+        <variable
+            name="loadItemHandler"
+            type="com.mightted.myrecipes.databindings.handlers.LoadItemHandler"/>
 
-        <android.support.v7.widget.Toolbar
-            android:id="@+id/toolbar"
-            android:layout_width="match_parent"
-            android:layout_height="?attr/actionBarSize"
-            android:background="#6b6fd4"
-            android:elevation="6dp"
-            app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
-            app:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
-            app:layout_scrollFlags="enterAlways|scroll|snap">
+        <variable
+            name="itemList"
+            type="List&lt;RecipeItem>"/>
 
-            <EditText
-                android:id="@+id/search_text"
-                android:layout_width="match_parent"
-                android:layout_height="30dp"
-                android:imeOptions="actionDone"
-                android:visibility="gone"
-                android:maxLines="1"
-                android:inputType="text"
-                android:background="@null"/>
+        <variable
+            name="listViewModel"
+            type="com.mightted.myrecipes.databindings.models.ListViewModel"/>
+
+        <variable
+            name="recyclerViewConfiguration"
+            type="com.mightted.myrecipes.databindings.models.RecyclerConfiguration"/>
 
 
-        </android.support.v7.widget.Toolbar>
+    </data>
 
+    <android.support.design.widget.CoordinatorLayout
 
-    </android.support.design.widget.AppBarLayout>
-
-
-
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swipe_refresh"
+        xmlns:tools="http://schemas.android.com/tools"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        app:layout_behavior="@string/appbar_scrolling_view_behavior">
+        tools:context="com.mightted.myrecipes.ui.activity.MainActivity">
 
-        <android.support.v7.widget.RecyclerView
+        <android.support.design.widget.AppBarLayout
+            android:id="@+id/appBar"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content">
+
+            <android.support.v7.widget.Toolbar
+                android:id="@+id/toolbar"
+                android:layout_width="match_parent"
+                android:layout_height="?attr/actionBarSize"
+                android:background="#6b6fd4"
+                android:elevation="6dp"
+                app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
+                android:theme="@style/ThemeOverlay.AppCompat.Dark.ActionBar"
+                app:layout_scrollFlags="enterAlways|scroll|snap">
+
+                <EditText
+                    android:id="@+id/search_text"
+                    android:layout_width="match_parent"
+                    android:layout_height="30dp"
+                    android:imeOptions="actionDone"
+                    android:visibility="gone"
+                    android:maxLines="1"
+                    android:inputType="text"
+                    android:background="@null"
+                    android:onFocusChange="@{searchHandler::onTextChange}"
+                    android:onEditorAction="@{(v, actionId, event) -> searchHandler.onEditorAction(v, actionId, event,listViewModel)}"/>
+
+
+            </android.support.v7.widget.Toolbar>
+
+
+        </android.support.design.widget.AppBarLayout>
+
+
+
+        <android.support.v4.widget.SwipeRefreshLayout
+            android:id="@+id/swipe_refresh"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            app:isRefreshing="@{listViewModel.refreshing}"
+            app:layout_behavior="@string/appbar_scrolling_view_behavior">
+
+            <android.support.v7.widget.RecyclerView
             android:id="@+id/recycle_view"
             android:layout_width="match_parent"
-            android:layout_height="match_parent" />
+            android:layout_height="match_parent"
+            app:recyclerConfigure="@{recyclerViewConfiguration}" />
 
-    </android.support.v4.widget.SwipeRefreshLayout>
+        </android.support.v4.widget.SwipeRefreshLayout>
 
-</android.support.design.widget.CoordinatorLayout>
+    </android.support.design.widget.CoordinatorLayout>
+
+
+</layout>
+

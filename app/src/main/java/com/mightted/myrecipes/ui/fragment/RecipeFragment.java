@@ -200,7 +200,6 @@ public class RecipeFragment extends Fragment {
 
         nameText.setText(recipe.result.name);
 
-//        Log.i("initData",recipe.result.recipe.ingredients);
 
         List<String> ingredients;
         try {
@@ -233,24 +232,15 @@ public class RecipeFragment extends Fragment {
                 viewList = new ArrayList<>();
                 methods = LoganSquare.parseList(method,RecipeDetail.Result.Recipe.Method.class);
                 for(int i = 0; i < methods.size(); i++) {
-//                    View view = LayoutInflater.from(getActivity()).inflate(R.layout.step_item,linearLayout,false);
-//                    ImageView imageView = (ImageView)view.findViewById(R.id.step_img);
-//                    TextView textView = (TextView)view.findViewById(R.id.step_text);
-//                    Glide.with(getActivity()).load(methods.get(i).img).into(imageView);
-//                    textView.setText(methods.get(i).step);
 
-//                    linearLayout.addView(view);
 
-//                    View view2 = LayoutInflater.from(getActivity()).inflate(R.layout.layout_test,null);
-//                    ((TextView)view2.findViewById(R.id.text)).setText("Hello");
+                    View view = LayoutInflater.from(getActivity()).inflate(R.layout.step_item,null);
+                    ImageView imageView = (ImageView)view.findViewById(R.id.step_img);
+                    TextView textView = (TextView)view.findViewById(R.id.step_text);
+                    Glide.with(getActivity()).load(methods.get(i).img).into(imageView);
+                    textView.setText(methods.get(i).step);
 
-                    View view2 = LayoutInflater.from(getActivity()).inflate(R.layout.step_item,null);
-                    ImageView imageView2 = (ImageView)view2.findViewById(R.id.step_img);
-                    TextView textView2 = (TextView)view2.findViewById(R.id.step_text);
-                    Glide.with(getActivity()).load(methods.get(i).img).into(imageView2);
-                    textView2.setText(methods.get(i).step);
-
-                    viewList.add(view2);
+                    viewList.add(view);
                 }
                 adapter = new QuickPageAdapter<>(viewList);
                 viewPager.setAdapter(adapter);

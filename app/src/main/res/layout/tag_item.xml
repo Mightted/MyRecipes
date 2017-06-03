@@ -1,19 +1,28 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content">
+<layout>
+    <data>
+        <variable
+            name="tagHandler"
+            type="com.mightted.myrecipes.databindings.handlers.TagHandler"/>
 
-    <TextView
-        android:id="@+id/tag_text"
+    </data>
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="wrap_content"
-        android:layout_height="40dp"
-        android:paddingLeft="15dp"
-        android:paddingRight="15dp"
-        app:layout_alignSelf="flex_start"
-        android:gravity="center"
-        android:background="@drawable/divider_shape"
-        android:textColor="@color/md_red_A100"
-        />
+        android:layout_height="wrap_content"
+        android:onClick="@{tagHandler.onHandleTag">
 
-</LinearLayout>
+        <TextView
+            android:id="@+id/tag_text"
+            android:layout_width="wrap_content"
+            android:layout_height="40dp"
+            android:paddingLeft="15dp"
+            android:paddingRight="15dp"
+            app:layout_alignSelf="flex_start"
+            android:gravity="center"
+            android:background="@drawable/divider_shape"
+            android:textColor="@color/md_red_A100"
+            />
+
+    </LinearLayout>
+</layout>
