@@ -1,4 +1,6 @@
-package com.mightted.myrecipes.bean;
+package com.mightted.myrecipes.databindings.models;
+
+
 
 /**
  * 菜谱列表项bean

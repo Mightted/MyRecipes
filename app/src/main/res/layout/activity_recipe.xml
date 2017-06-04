@@ -6,8 +6,6 @@
     android:layout_height="match_parent"
     tools:context="com.mightted.myrecipes.ui.activity.RecipeActivity">
 
-
-
     <android.support.design.widget.AppBarLayout
         android:id="@+id/appBar"
         android:layout_width="match_parent"
@@ -63,3 +61,5 @@
         app:layout_anchorGravity="bottom|end"/>
 
 </android.support.design.widget.CoordinatorLayout>
+
+

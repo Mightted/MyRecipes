@@ -1,21 +1,17 @@
 package com.mightted.myrecipes.ui.adapter;
 
 import android.content.Context;
-import android.content.Intent;
+import android.databinding.DataBindingUtil;
 import android.support.v7.widget.RecyclerView;
-import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
-import android.widget.ImageView;
-import android.widget.ProgressBar;
-import android.widget.TextView;
 
-import com.bumptech.glide.Glide;
 import com.mightted.myrecipes.R;
-import com.mightted.myrecipes.app.MyApplication;
-import com.mightted.myrecipes.bean.RecipeItem;
-import com.mightted.myrecipes.ui.activity.RecipeActivity;
+import com.mightted.myrecipes.databinding.FooterItemBinding;
+import com.mightted.myrecipes.databinding.RecipeItemBinding;
+import com.mightted.myrecipes.databindings.handlers.RecipeItemHandler;
+import com.mightted.myrecipes.databindings.models.RecipeItem;
 
 import java.util.List;
 
@@ -39,48 +35,45 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         this.recipeItems = list;
     }
 
+
+
     @Override
     public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
         if(mContext == null) {
             mContext = parent.getContext();
         }
         if(viewType == NORMAL_ITEM_TYPE) {
-            return new ViewHolder(LayoutInflater.from(mContext).inflate(R.layout.recipe_item,parent,false));
+            RecipeItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mContext),R.layout.recipe_item,parent,false);
+            ViewHolder viewHolder = new ViewHolder(binding.getRoot());
+            viewHolder.setBinding(binding);
+            return viewHolder;
+
         } else {
-            return new FootHolder(LayoutInflater.from(mContext).inflate(R.layout.footer_item,parent,false));
+            FooterItemBinding binding = DataBindingUtil.inflate(LayoutInflater.from(mContext),R.layout.footer_item,parent,false);
+            FootHolder footHolder = new FootHolder(binding.getRoot());
+            footHolder.setBinding(binding);
+            return footHolder;
         }
+
     }
+
+
 
     @Override
     public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) {
         if(holder instanceof ViewHolder) {
-            final RecipeItem item = recipeItems.get(position);
-            ((ViewHolder)holder).titleView.setText(item.getTitle());
+            ((ViewHolder) holder).getBinding().setRecipeItem(recipeItems.get(position));
+            ((ViewHolder) holder).getBinding().setRecipeItemHandler(new RecipeItemHandler());
 
-            /**
-             * 由于API数据会出现残缺的问题，部分菜谱可能会没有预览图
-             * 因此这里要进行判断，如果获取的是空数据，那么使用相关的图片代替预览图
-             */
-            if(item.getImg() == null || item.getImg().equals("")) {
-                Glide.with(MyApplication.getContext()).load(R.drawable.no_image).into(((ViewHolder)holder).imageView);
-            } else {
-                Glide.with(MyApplication.getContext()).load(item.getImg()).into(((ViewHolder)holder).imageView);
-            }
-
-            ((ViewHolder)holder).itemView.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    Intent intent = new Intent(mContext, RecipeActivity.class);
-                    intent.putExtra("recipeId",item.getRecipeId());
-                    intent.putExtra("recipeTitle",item.getTitle());
-                    intent.putExtra("recipeImg",item.getRecipeImg());
-                    mContext.startActivity(intent);
-                }
-            });
-
+            ((ViewHolder) holder).getBinding().executePendingBindings();
+        } else {
+            ((FootHolder) holder).getBinding().executePendingBindings();
         }
 
+
     }
+
+
 
     @Override
     public int getItemViewType(int position) {
@@ -89,23 +82,13 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         } else {
             RecipeItem item = recipeItems.get(position);
             if(item.getTitle() == null || item.getTitle().equals("")) {
-                Log.i("RecipeAdapter","加载item");
                 return FOOTER_ITEM_TYPE;
             } else {
-//                Log.i("RecipeAdapter","普通item");
-//                Log.i("RecipeAdapter",item.getTitle());
                 return NORMAL_ITEM_TYPE;
             }
-            /**
-             * 原来通过判断当前位置是否到达list末尾而选择加载的
-             * 但是可能会出现重复加载的问题
-             * 因此将改为诱导式（？）方式加载等待动画
-             * list数据填充的时候，在填充完毕的时候会有意在最后加入一个空的item
-             * 从而诱导Adapter加载特殊ViewHolder
-             */
-//            return position == recipeItems.size() ? FOOTER_ITEM_TYPE : NORMAL_ITEM_TYPE;
         }
     }
+
 
 
     @Override
@@ -117,26 +100,41 @@ public class RecipeAdapter extends RecyclerView.Adapter<RecyclerView.ViewHolder>
         return recipeItems == null ? 0 : recipeItems.size();
     }
 
-    private static class ViewHolder extends RecyclerView.ViewHolder {
 
-        TextView titleView;
-        ImageView imageView;
+
+    public static class ViewHolder extends RecyclerView.ViewHolder {
+
+        private RecipeItemBinding binding;
 
         ViewHolder(View view) {
             super(view);
-            titleView = (TextView)view.findViewById(R.id.recipe_title);
-            imageView = (ImageView)view.findViewById(R.id.recipe_img);
+        }
 
+        public void setBinding(RecipeItemBinding binding) {
+            this.binding = binding;
+        }
+
+        public RecipeItemBinding getBinding() {
+            return binding;
         }
     }
 
-    private static class FootHolder extends RecyclerView.ViewHolder {
 
-        ProgressBar progressBar;
+
+    public static class FootHolder extends RecyclerView.ViewHolder {
+
+        private FooterItemBinding binding;
 
         FootHolder(View itemView) {
             super(itemView);
-            progressBar = (ProgressBar)itemView.findViewById(R.id.progress_bar);
+        }
+
+        public void setBinding(FooterItemBinding binding) {
+            this.binding = binding;
+        }
+
+        public FooterItemBinding getBinding() {
+            return binding;
         }
     }
 }
