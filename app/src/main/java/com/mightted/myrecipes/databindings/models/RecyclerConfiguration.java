@@ -5,6 +5,7 @@ import android.support.v7.widget.RecyclerView;
 import com.mightted.myrecipes.ui.adapter.RecipeAdapter;
 
 /**
+ * RecyclerView配置类
  * Created by 晓深 on 2017/5/31.
  */
 

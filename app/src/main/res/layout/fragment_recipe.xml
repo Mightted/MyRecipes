@@ -1,6 +1,26 @@
 <?xml version="1.0" encoding="utf-8"?>
-<layout>
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
     <data>
+
+        <variable
+            name="recipeModel"
+            type="com.mightted.myrecipes.databindings.models.RecipeViewModel"/>
+
+        <variable
+            name="recipeViewHandler"
+            type="com.mightted.myrecipes.databindings.handlers.RecipeViewHandler"/>
+
+        <!--<variable-->
+            <!--name="viewPager"-->
+            <!--type="android.support.v4.view.ViewPager"/>-->
+        <!---->
+        <!--<variable-->
+            <!--name="indicator"-->
+            <!--type="me.relex.circleindicator.CircleIndicator"/>-->
+
+        <!--<variable-->
+            <!--name="flexboxLayout"-->
+            <!--type="com.google.android.flexbox.FlexboxLayout"/>-->
 
     </data>
 
@@ -9,7 +29,9 @@
         android:layout_margin="5dp"
         android:layout_height="match_parent">
 
-        <include layout="@layout/tag_layout" />
+        <include layout="@layout/tag_layout"
+            app:recipeModel="@{recipeModel}"
+            app:recipeViewHandler="@{recipeViewHandler}"/>
 
         <TextView
             android:id="@+id/sumary_label"
@@ -25,6 +47,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:text="@{recipeModel.recipeSumary}"
             android:textSize="16sp"/>
 
         <TextView
@@ -41,6 +64,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:text="@{recipeModel.recipeName}"
             android:textSize="20sp"/>
 
         <TextView
@@ -57,6 +81,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:text="@{recipeModel.recipeIngredient}"
             android:textSize="16sp"/>
 
         <TextView
@@ -73,6 +98,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"
+            android:text="@{recipeModel.recipeBurden}"
             android:textSize="16sp"/>
 
         <TextView
@@ -100,7 +126,7 @@
                 android:layout_width="match_parent"
                 android:layout_height="20dp"
                 android:layout_alignParentBottom="true"
-                android:layout_marginBottom="150dp"/>
+                android:layout_marginBottom="150dp" />
 
 
         </RelativeLayout>

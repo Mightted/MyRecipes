@@ -2,15 +2,18 @@
 <layout>
     <data>
         <variable
+            name="tag"
+            type="com.mightted.myrecipes.bean.RecipeTag"/>
+
+        <variable
             name="tagHandler"
             type="com.mightted.myrecipes.databindings.handlers.TagHandler"/>
-
     </data>
+
     <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
         xmlns:app="http://schemas.android.com/apk/res-auto"
         android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:onClick="@{tagHandler.onHandleTag">
+        android:layout_height="wrap_content">
 
         <TextView
             android:id="@+id/tag_text"
@@ -22,7 +25,9 @@
             android:gravity="center"
             android:background="@drawable/divider_shape"
             android:textColor="@color/md_red_A100"
-            />
+            android:text="@{tag.tagName}"
+            android:onClick="@{(v) ->tagHandler.onHandleTag(v,tag.tagId)}"/>
 
     </LinearLayout>
+
 </layout>

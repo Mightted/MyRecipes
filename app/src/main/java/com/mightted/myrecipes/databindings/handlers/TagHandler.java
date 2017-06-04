@@ -1,7 +1,8 @@
 package com.mightted.myrecipes.databindings.handlers;
 
+import android.content.Intent;
 import android.view.View;
-import android.widget.Toast;
+import com.mightted.myrecipes.ui.activity.MainActivity;
 
 /**
  * 执行标签点击动作的Handler类
@@ -10,8 +11,15 @@ import android.widget.Toast;
 
 public class TagHandler {
 
-    public void onHandleTag(View view) {
-        Toast.makeText(view.getContext(),"跳转",Toast.LENGTH_SHORT).show();
+    /**
+     * 点击菜谱标签时执行动作，跳转到标签相关的菜谱列表
+     * @param view
+     * @param tagId
+     */
+    public void onHandleTag(View view,String tagId) {
+        Intent intent = new Intent(view.getContext(), MainActivity.class);
+        intent.putExtra("recipeType",tagId);
+        view.getContext().startActivity(intent);
 
     }
 }

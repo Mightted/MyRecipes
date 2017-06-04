@@ -2,27 +2,17 @@ package com.mightted.myrecipes.app;
 
 import android.app.Application;
 import android.content.Context;
-import android.util.Log;
-import android.widget.Toast;
-
-
 import com.mightted.myrecipes.dagger.components.DaggerAppComponent;
 import com.mightted.myrecipes.dagger.modules.AppModule;
 import com.mightted.myrecipes.db.RecipeType;
 import com.mightted.myrecipes.domain.RetrofitClient;
 import com.mightted.myrecipes.domain.entity.RecType;
 import com.mightted.myrecipes.domain.service.TypeService;
-import com.mightted.myrecipes.ui.activity.MainActivity;
 import com.mightted.myrecipes.utils.LogUtil;
 import com.mightted.myrecipes.utils.RetrofitUtil;
-
 import org.litepal.LitePal;
 import org.litepal.crud.DataSupport;
-
 import java.util.List;
-
-import javax.inject.Inject;
-
 import io.reactivex.Observer;
 import io.reactivex.android.schedulers.AndroidSchedulers;
 import io.reactivex.disposables.Disposable;
@@ -47,8 +37,6 @@ public class MyApplication extends Application {
         LitePal.getDatabase();
         DaggerAppComponent.builder().appModule(new AppModule(this)).build().inject(this);
         mContext = getApplicationContext();
-
-
         new Thread(new Runnable() {
             @Override
             public void run() {
@@ -87,11 +75,9 @@ public class MyApplication extends Application {
                     public void onSubscribe(Disposable d) {
                         LogUtil.i("initRecipeType","onSubscribe is called");
                     }
-
                     @Override
                     public void onNext(RecType value) {
                         LogUtil.i("initRecipeType","onNext is called");
-//                        Log.i("initRecipeType",value.result.all.name);
                         List<RecType.Result.SearchType> types = value.result.types;
                         for(RecType.Result.SearchType type:types) {
 

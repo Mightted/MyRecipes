@@ -10,9 +10,9 @@
             name="searchHandler"
             type="com.mightted.myrecipes.databindings.handlers.SearchHandler"/>
         
-        <variable
-            name="loadItemHandler"
-            type="com.mightted.myrecipes.databindings.handlers.LoadItemHandler"/>
+        <!--<variable-->
+            <!--name="loadItemHandler"-->
+            <!--type="com.mightted.myrecipes.databindings.handlers.LoadItemHandler"/>-->
 
         <variable
             name="itemList"

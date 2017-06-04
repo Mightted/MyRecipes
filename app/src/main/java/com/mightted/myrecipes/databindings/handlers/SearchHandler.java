@@ -11,16 +11,17 @@ import android.widget.TextView;
 import com.mightted.myrecipes.databindings.models.ListViewModel;
 
 /**
+ *
  * Created by 晓深 on 2017/5/31.
  */
 
 public class SearchHandler {
 
-
-    public SearchHandler() {
-
-    }
-
+    /**
+     * EditText的onTextChanged方法实现，原生实现
+     * @param view 组件
+     * @param hasFocus 是否拥有焦点
+     */
     public void onTextChange(View view,boolean hasFocus) {
         if(!hasFocus) {
             view.setVisibility(View.GONE);
@@ -29,6 +30,14 @@ public class SearchHandler {
         }
     }
 
+    /**
+     * EditText的onEditorAction方法实现，自定义实现
+     * @param v 组件
+     * @param actionId 动作id
+     * @param event 事件
+     * @param listViewModel
+     * @return
+     */
     public boolean onEditorAction(TextView v, int actionId, KeyEvent event, ListViewModel listViewModel) {
         if(actionId == EditorInfo.IME_ACTION_DONE && !TextUtils.isEmpty(v.getText())) {
             listViewModel.setCurrentType("");

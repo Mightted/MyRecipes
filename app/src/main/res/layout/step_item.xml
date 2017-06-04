@@ -1,33 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<layout xmlns:app="http://schemas.android.com/apk/res-auto">
+    <data>
+        <variable
+            name="method"
+            type="com.mightted.myrecipes.bean.RecipeMethod"/>
+    </data>
 
-    <android.support.v4.widget.NestedScrollView
-        android:layout_width="match_parent"
+    <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+        android:orientation="vertical" android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-        <LinearLayout
+        <android.support.v4.widget.NestedScrollView
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:orientation="vertical">
+            android:layout_height="match_parent">
 
-            <ImageView
-                android:id="@+id/step_img"
+            <LinearLayout
                 android:layout_width="match_parent"
-                android:layout_height="400dp"
-                android:scaleType="centerCrop"/>
+                android:layout_height="match_parent"
+                android:orientation="vertical">
 
-            <TextView
-                android:id="@+id/step_text"
-                android:textSize="24sp"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content" />
+                <ImageView
+                    android:id="@+id/step_img"
+                    android:layout_width="match_parent"
+                    android:layout_height="400dp"
+                    android:scaleType="centerCrop"
+                    app:imageUrl="@{method.methodImg}"/>
 
-        </LinearLayout>
+                <TextView
+                    android:id="@+id/step_text"
+                    android:textSize="24sp"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="@{method.methodText}"/>
 
-    </android.support.v4.widget.NestedScrollView>
+            </LinearLayout>
 
+        </android.support.v4.widget.NestedScrollView>
 
+    </LinearLayout>
 
-</LinearLayout>
+</layout>

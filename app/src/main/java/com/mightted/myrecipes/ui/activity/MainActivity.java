@@ -95,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
         binding.setSearchHandler(new SearchHandler());
         binding.setRecyclerViewConfiguration(configuration);
         binding.setItemList(recipeItems);
-        binding.setLoadItemHandler(new LoadItemHandler());
+//        binding.setLoadItemHandler(new LoadItemHandler());
         binding.setListViewModel(listViewModel);
 
         setSupportActionBar(binding.toolbar);
@@ -194,6 +194,9 @@ public class MainActivity extends AppCompatActivity {
                 if(lastPosition == recipeItems.size()-1 && lastPosition > 0) {
                     Log.i("MainActivity","开始加载更多");
                     if(currentTotal != recipeItems.size()) {
+                        //可能会有小伙伴说，你特么这里只调用一个onDealList就行了，为什么不调用setRefreshing？
+                        //那么讲一下两者的区别，后者调用的话，会有一个修改当前页，并且清空列表项的效果，那么毫无疑问就是刷新了
+                        //而前者只是仅仅是加载新的列表进去，而且没有加载圈的出现，至于对视图的刷新，都是在列表修改的时候进行通知刷新了
                         listViewModel.onDealList();
                     }
                 }
